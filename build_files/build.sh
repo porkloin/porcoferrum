@@ -17,9 +17,8 @@ dnf5 -y install liquidctl
 dnf5 -y copr enable codifryed/CoolerControl
 dnf5 install -y coolercontrol
 
-# vk_hdr_layer
-dnf5 -y copr enable bazzite-org/vk_hdr_layer
-dnf install -y vk_hdr_layer
+dnf install -y gamescope
+dnf install -y steam
 
 # Use a COPR Example:
 #
