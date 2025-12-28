@@ -17,8 +17,8 @@ dnf5 -y install liquidctl
 dnf5 -y copr enable codifryed/CoolerControl
 dnf5 install -y coolercontrol
 
-dnf install -y gamescope
-dnf install -y steam
+dnf5 -y config-manager addrepo --from-repofile=https://negativo17.org/repos/fedora-steam.repo
+dnf5 install -y steam gamescope mangohud
 
 # Use a COPR Example:
 #
