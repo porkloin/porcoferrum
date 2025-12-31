@@ -2,34 +2,24 @@
 
 set -ouex pipefail
 
-### Install packages
-
-# Packages can be installed from any enabled yum repo on the image.
-# RPMfusion repos are available by default in ublue main images
-# List of rpmfusion packages can be found here:
-# https://mirrors.rpmfusion.org/mirrorlist?path=free/fedora/updates/39/x86_64/repoview/index.html&protocol=https&redirect=1
-
-# this installs a package from fedora repos
-dnf5 install -y tmux
-
-# coolercontrol
-dnf5 -y install liquidctl
+# enable COPRs + other dnf shit
 dnf5 -y copr enable codifryed/CoolerControl
-dnf5 install -y coolercontrol
-
+dnf5 -y copr enable lizardbyte/beta
 dnf5 -y config-manager addrepo --from-repofile=https://negativo17.org/repos/fedora-steam.repo
-dnf5 install -y steam gamescope mangohud
 
-# Use a COPR Example:
-#
-# dnf5 -y copr enable ublue-os/staging
-# dnf5 -y install package
-# Disable COPRs so they don't end up enabled on the final image:
-# dnf5 -y copr disable ublue-os/staging
+# install extra shit
+dnf5 install -y \
+  tmux \
+  coolercontrol \
+  liquidctl \
+  steam \
+  gamescope \
+  mangohud \
+  Sunshine
 
-#### Example for enabling a System Unit File
+# disable COPRs
+dnf5 -y copr disable codifryed/CoolerControl
+dnf5 -y copr disable lizardbyte/beta
 
-systemctl enable podman.socket
-
-# Enable systemd unit for coolercontrol
+# enable units
 systemctl enable coolercontrold.service
