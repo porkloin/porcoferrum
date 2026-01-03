@@ -7,6 +7,19 @@ dnf5 -y copr enable codifryed/CoolerControl
 dnf5 -y copr enable lizardbyte/beta
 dnf5 -y config-manager addrepo --from-repofile=https://negativo17.org/repos/fedora-steam.repo
 
+# fresh DMS regardless of zirc upstream updates
+dnf -y copr enable avengemedia/dms-git
+dnf -y \
+  --enablerepo copr:copr.fedorainfracloud.org:avengemedia:dms-git \
+  --enablerepo copr:copr.fedorainfracloud.org:avengemedia:danklinux \
+  install --setopt=install_weak_deps=False \
+  dms \
+  dms-cli \
+  dms-greeter \
+  dgop \
+  dsearch
+dnf -y copr disable avengemedia/dms-git
+
 # install extra shit
 dnf5 install -y \
   tmux \
