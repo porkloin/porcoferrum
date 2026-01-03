@@ -12,7 +12,8 @@ dnf -y copr enable avengemedia/dms-git
 dnf -y \
   --enablerepo copr:copr.fedorainfracloud.org:avengemedia:dms-git \
   --enablerepo copr:copr.fedorainfracloud.org:avengemedia:danklinux \
-  install --setopt=install_weak_deps=False \
+  distro-sync \
+  --setopt=install_weak_deps=False \
   dms \
   dms-cli \
   dms-greeter \
