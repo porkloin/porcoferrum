@@ -45,5 +45,10 @@ dnf5 -y copr disable lizardbyte/beta
 dnf5 -y copr disable avengemedia/dms-git
 dnf5 -y copr disable ublue-os/bazzite
 
+# Scopebuddy
+curl -Lo /usr/local/bin/scopebuddy https://raw.githubusercontent.com/HikariKnight/ScopeBuddy/refs/heads/main/bin/scopebuddy
+chmod +x /usr/local/bin/scopebuddy
+ln -s scopebuddy /usr/local/bin/scb
+
 # enable units
 systemctl enable coolercontrold.service
