@@ -31,14 +31,6 @@ dnf5 install -y \
   mangohud \
   Sunshine
 
-# gamescope session
-mkdir -p /usr/share/gamescope-session-plus/
-curl --retry 3 -Lo /usr/share/gamescope-session-plus/bootstrap_steam.tar.gz https://large-package-sources.nobaraproject.org/bootstrap_steam.tar.gz
-dnf5 -y install \
-  --repo copr:copr.fedorainfracloud.org:ublue-os:bazzite \
-  gamescope-session-plus \
-  gamescope-session-steam
-#
 # disable COPRs
 dnf5 -y copr disable codifryed/CoolerControl
 dnf5 -y copr disable lizardbyte/beta
