@@ -2,6 +2,8 @@
 FROM scratch AS ctx
 COPY build_files /
 
+FROM ghcr.io/ublue-os/akmods:main-43 AS akmods_common
+
 # Base Image
 FROM ghcr.io/zirconium-dev/zirconium:latest
 
