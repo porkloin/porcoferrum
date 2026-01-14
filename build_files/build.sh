@@ -36,8 +36,20 @@ if [[ ! -d /var/tmp/akmods-rpms ]]; then
   exit 1
 fi
 
+# xone
 dnf5 install -y /var/tmp/akmods-rpms/ublue-os/ublue-os-akmods*.rpm
 dnf5 install -y /var/tmp/akmods-rpms/kmods/kmod-xone*.rpm
+
+# xone firmware shit
+dnf5 install -y curl cabextract
+
+curl -fsSL \
+  https://raw.githubusercontent.com/medusalix/xone/main/install/firmware.sh \
+  -o /usr/local/bin/xone-get-firmware.sh
+
+chmod +x /usr/local/bin/xone-get-firmware.sh
+
+xone-get-firmware.sh
 
 # disable COPRs
 dnf5 -y copr disable codifryed/CoolerControl
