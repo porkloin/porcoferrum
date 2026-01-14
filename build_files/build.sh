@@ -31,6 +31,14 @@ dnf5 install -y \
   mangohud \
   Sunshine
 
+if [[ ! -d /var/tmp/akmods-rpms ]]; then
+  echo "ERROR: /var/tmp/akmods-rpms not present; akmods COPY stage failed."
+  exit 1
+fi
+
+dnf5 install -y /var/tmp/akmods-rpms/ublue-os/ublue-os-akmods*.rpm
+dnf5 install -y /var/tmp/akmods-rpms/kmods/kmod-xone*.rpm
+
 # disable COPRs
 dnf5 -y copr disable codifryed/CoolerControl
 dnf5 -y copr disable lizardbyte/beta
