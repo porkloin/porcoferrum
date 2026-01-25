@@ -23,9 +23,9 @@ FROM ghcr.io/zirconium-dev/zirconium:latest
 ## the following RUN directive does all the things required to run "build.sh" as recommended.
 
 
-COPY --from=akmods_common /rpms/ /var/tmp/akmods-rpms/
+COPY --from=akmods_common /rpms/ /tmp/akmods-rpms/
 
-RUN ls -la /var/tmp/akmods-rpms && ls -la /var/tmp/akmods-rpms/kmods || true
+RUN ls -la /tmp/akmods-rpms && ls -la /tmp/akmods-rpms/kmods || true
 
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
   --mount=type=cache,dst=/var/cache \
