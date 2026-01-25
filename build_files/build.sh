@@ -30,17 +30,22 @@ dnf5 install -y \
   mangohud \
   Sunshine
 
-if [[ ! -d /tmp/akmods-rpms ]]; then
-  echo "ERROR: /tmp/akmods-rpms not present; akmods COPY stage failed."
+if [[ ! -d /var/tmp/akmods-rpms ]]; then
+  echo "ERROR: /var/tmp/akmods-rpms not present; akmods COPY stage failed."
   exit 1
 fi
 
-dnf5 install -y /tmp/akmods-rpms/ublue-os/ublue-os-akmods*.rpm
+dnf5 install -y \
+  --setopt=install_weak_deps=False \
+  --setopt=rpm.install.excludedocs=1 \
+  /var/tmp/akmods-rpms/ublue-os/ublue-os-akmods*.rpm
 
-dnf5 install -y /tmp/akmods-rpms/kmods/kmod-xone*.rpm
+dnf5 install -y \
+  --setopt=install_weak_deps=False \
+  --setopt=rpm.install.excludedocs=1 \
+  /var/tmp/akmods-rpms/kmods/kmod-xone*.rpm
 
-# Clean up the copied RPM payload (optional, keeps image smaller)
-rm -rf /tmp/akmods-rpms
+rm -rf /var/tmp/akmods-rpms
 
 # xone dongle firmware is a fucking nightmare.
 # i guess the firmware looks for specific hardware revisions,
