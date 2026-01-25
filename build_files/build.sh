@@ -36,11 +36,9 @@ if [[ ! -d /var/tmp/akmods-rpms ]]; then
 fi
 
 dnf5 install -y \
-  --setopt=install_weak_deps=False \
   /var/tmp/akmods-rpms/ublue-os/ublue-os-akmods*.rpm
 
 dnf5 install -y \
-  --setopt=install_weak_deps=False \
   /var/tmp/akmods-rpms/kmods/kmod-xone*.rpm
 
 rm -rf /var/tmp/akmods-rpms
