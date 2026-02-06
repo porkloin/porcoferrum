@@ -1,5 +1,5 @@
-#!/bin/bash
 set -ouex pipefail
+#!/bin/bash
 
 # enable COPRs + other dnf shit
 dnf5 -y copr enable codifryed/CoolerControl
@@ -30,38 +30,46 @@ dnf5 install -y \
   mangohud \
   Sunshine
 
-if [[ ! -d /var/tmp/akmods-rpms ]]; then
-  echo "ERROR: /var/tmp/akmods-rpms not present; akmods COPY stage failed."
-  exit 1
-fi
+dnf5 -y install --nogpgcheck --repofrompath 'terra,https://repos.fyralabs.com/terra$releasever' terra-release{,-extras,-mesa}
+dnf5 -y install akmods akmod-xone kernel-devel gcc make elfutils-libelf-devel
+akmods --force
+# Ensure module deps are indexed
+for kver in /usr/lib/modules/*; do
+  depmod -a "$(basename "$kver")" || true
+done
 
-dnf5 install -y \
-  /var/tmp/akmods-rpms/ublue-os/ublue-os-akmods*.rpm
+#if [[ ! -d /var/tmp/akmods-rpms ]]; then
+#  echo "ERROR: /var/tmp/akmods-rpms not present; akmods COPY stage failed."
+#  exit 1
+#fi
+#
+#dnf5 install -y \
+#  /var/tmp/akmods-rpms/ublue-os/ublue-os-akmods*.rpm
 
-dnf5 install -y \
-  /var/tmp/akmods-rpms/kmods/kmod-xone*.rpm
+#dnf5 install -y \
+#  /var/tmp/akmods-rpms/kmods/kmod-xone*.rpm
 
-rm -rf /var/tmp/akmods-rpms
+#rm -rf /var/tmp/akmods-rpms
 
 # xone dongle firmware is a fucking nightmare.
 # i guess the firmware looks for specific hardware revisions,
 # so we have to get the firmware into the correct location
 # for a bunch of random hardware revisions.
 # Probably could be in a user systemd unit or something idk
-FWDIR="/usr/lib/firmware"
+#FWDIR="/usr/lib/firmware"
 
-if [[ -f "${FWDIR}/xow_dongle.bin" ]]; then
-  install -Dpm0644 "${FWDIR}/xow_dongle.bin" "${FWDIR}/xone_dongle_02fe.bin"
-else
-  echo "WARNING: ${FWDIR}/xow_dongle.bin not found; xone dongle firmware may not be installed."
-fi
+#if [[ -f "${FWDIR}/xow_dongle.bin" ]]; then
+#  install -Dpm0644 "${FWDIR}/xow_dongle.bin" "${FWDIR}/xone_dongle_02fe.bin"
+#else
+#  echo "WARNING: ${FWDIR}/xow_dongle.bin not found; xone dongle firmware may not be installed."
+#fi
 
-if [[ -f "${FWDIR}/xow_dongle_045e_02e6.bin" ]]; then
-  install -Dpm0644 "${FWDIR}/xow_dongle_045e_02e6.bin" "${FWDIR}/xone_dongle_02e6.bin"
-  install -Dpm0644 "${FWDIR}/xow_dongle_045e_02e6.bin" "${FWDIR}/xone_dongle_045e_02e6.bin"
-fi
+#if [[ -f "${FWDIR}/xow_dongle_045e_02e6.bin" ]]; then
+#  install -Dpm0644 "${FWDIR}/xow_dongle_045e_02e6.bin" "${FWDIR}/xone_dongle_02e6.bin"
+#  install -Dpm0644 "${FWDIR}/xow_dongle_045e_02e6.bin" "${FWDIR}/xone_dongle_045e_02e6.bin"
+#fi
 
-ls -l "${FWDIR}"/xow_dongle*.bin "${FWDIR}"/xone_dongle*.bin 2>/dev/null || true
+#ls -l "${FWDIR}"/xow_dongle*.bin "${FWDIR}"/xone_dongle*.bin 2>/dev/null || true
 
 # disable COPRs
 dnf5 -y copr disable codifryed/CoolerControl
