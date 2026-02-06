@@ -29,6 +29,10 @@ pushd /tmp/xone
 make -C "${KERNEL_SRC}" M="$PWD" modules
 make -C "${KERNEL_SRC}" M="$PWD" modules_install
 
+dnf5 install -y bsdtar
+cd /tmp/xone
+./install/firmware.sh --skip-disclaimer
+
 popd
 
 depmod -a "${KERNEL_VERSION}"
