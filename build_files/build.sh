@@ -1,86 +1,46 @@
-set -ouex pipefail
-#!/bin/bash
+#!/usr/bin/env bash
+set -xeuo pipefail
 
-# enable COPRs + other dnf shit
 dnf5 -y copr enable codifryed/CoolerControl
-dnf5 -y copr enable lizardbyte/beta
-dnf5 -y copr enable avengemedia/dms-git
-dnf5 -y copr enable ublue-os/bazzite
-dnf5 -y config-manager addrepo --from-repofile=https://negativo17.org/repos/fedora-steam.repo
-
-# fresh DMS regardless of zirc upstream updates
-dnf5 -y \
-  --enablerepo copr:copr.fedorainfracloud.org:avengemedia:dms-git \
-  --enablerepo copr:copr.fedorainfracloud.org:avengemedia:danklinux \
-  distro-sync \
-  --setopt=install_weak_deps=False \
-  dms \
-  dms-cli \
-  dms-greeter \
-  dgop \
-  dsearch
-
-# install extra shit
-dnf5 install -y \
-  tmux \
-  coolercontrol \
-  liquidctl \
-  steam \
-  gamescope \
-  mangohud \
-  Sunshine
-
-dnf5 -y install --nogpgcheck --repofrompath 'terra,https://repos.fyralabs.com/terra$releasever' terra-release{,-extras,-mesa}
-dnf5 -y install akmods akmod-xone kernel-devel gcc make elfutils-libelf-devel
-akmods --force
-# Ensure module deps are indexed
-for kver in /usr/lib/modules/*; do
-  depmod -a "$(basename "$kver")" || true
-done
-
-#if [[ ! -d /var/tmp/akmods-rpms ]]; then
-#  echo "ERROR: /var/tmp/akmods-rpms not present; akmods COPY stage failed."
-#  exit 1
-#fi
-#
-#dnf5 install -y \
-#  /var/tmp/akmods-rpms/ublue-os/ublue-os-akmods*.rpm
-
-#dnf5 install -y \
-#  /var/tmp/akmods-rpms/kmods/kmod-xone*.rpm
-
-#rm -rf /var/tmp/akmods-rpms
-
-# xone dongle firmware is a fucking nightmare.
-# i guess the firmware looks for specific hardware revisions,
-# so we have to get the firmware into the correct location
-# for a bunch of random hardware revisions.
-# Probably could be in a user systemd unit or something idk
-#FWDIR="/usr/lib/firmware"
-
-#if [[ -f "${FWDIR}/xow_dongle.bin" ]]; then
-#  install -Dpm0644 "${FWDIR}/xow_dongle.bin" "${FWDIR}/xone_dongle_02fe.bin"
-#else
-#  echo "WARNING: ${FWDIR}/xow_dongle.bin not found; xone dongle firmware may not be installed."
-#fi
-
-#if [[ -f "${FWDIR}/xow_dongle_045e_02e6.bin" ]]; then
-#  install -Dpm0644 "${FWDIR}/xow_dongle_045e_02e6.bin" "${FWDIR}/xone_dongle_02e6.bin"
-#  install -Dpm0644 "${FWDIR}/xow_dongle_045e_02e6.bin" "${FWDIR}/xone_dongle_045e_02e6.bin"
-#fi
-
-#ls -l "${FWDIR}"/xow_dongle*.bin "${FWDIR}"/xone_dongle*.bin 2>/dev/null || true
-
-# disable COPRs
+dnf5 install -y coolercontrol liquidctl
 dnf5 -y copr disable codifryed/CoolerControl
-dnf5 -y copr disable lizardbyte/beta
-dnf5 -y copr disable avengemedia/dms-git
-dnf5 -y copr disable ublue-os/bazzite
 
-# Scopebuddy
-curl -Lo /usr/local/bin/scopebuddy https://raw.githubusercontent.com/HikariKnight/ScopeBuddy/refs/heads/main/bin/scopebuddy
+dnf -y copr enable bieszczaders/kernel-cachyos
+dnf -y copr disable bieszczaders/kernel-cachyos
+
+dnf5 -y --enablerepo=copr:copr.fedorainfracloud.org:bieszczaders:kernel-cachyos \
+  install \
+  kernel-cachyos \
+  kernel-cachyos-devel-matched
+
+KERNEL_VERSION="$(ls /usr/lib/modules | sort -V | tail -n1)"
+KERNEL_SRC="/usr/src/kernels/${KERNEL_VERSION}"
+
+echo "== Target kernel: ${KERNEL_VERSION} =="
+
+if [[ ! -d "${KERNEL_SRC}" ]]; then
+  echo "ERROR: Missing kernel headers at ${KERNEL_SRC}"
+  exit 1
+fi
+
+git clone --depth=1 https://github.com/dlundqvist/xone /tmp/xone
+pushd /tmp/xone
+
+make -C "${KERNEL_SRC}" M="$PWD" modules
+make -C "${KERNEL_SRC}" M="$PWD" modules_install
+
+popd
+
+depmod -a "${KERNEL_VERSION}"
+
+if ! find "/usr/lib/modules/${KERNEL_VERSION}" -iname 'xone*.ko*' | grep -q .; then
+  echo "ERROR: xone module not installed"
+  exit 1
+fi
+
+curl -Lo /usr/local/bin/scopebuddy \
+  https://raw.githubusercontent.com/HikariKnight/ScopeBuddy/refs/heads/main/bin/scopebuddy
 chmod +x /usr/local/bin/scopebuddy
 ln -sf scopebuddy /usr/local/bin/scb
 
-# enable units
 systemctl enable coolercontrold.service

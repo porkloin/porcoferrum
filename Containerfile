@@ -5,7 +5,7 @@ COPY build_files /
 #FROM ghcr.io/ublue-os/akmods:main-43 AS akmods_common
 
 # Base Image
-FROM ghcr.io/zirconium-dev/zirconium:latest
+FROM ghcr.io/zirconium-dev/zirconium-jackrabbit:latest
 
 ### [IM]MUTABLE /opt
 ## Some bootable images, like Fedora, have /opt symlinked to /var/opt, in order to
