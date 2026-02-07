@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -xeuo pipefail
 
+rm /etc/profile.d/gamerslop.sh
+
 dnf5 -y copr enable codifryed/CoolerControl
 dnf5 install -y coolercontrol liquidctl
 dnf5 -y copr disable codifryed/CoolerControl
