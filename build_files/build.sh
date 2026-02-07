@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -xeuo pipefail
 
-rm /etc/profile.d/gamerslop.sh
+rm -f /etc/profile.d/gamerslop.sh
 
 dnf5 -y copr enable codifryed/CoolerControl
 dnf5 install -y coolercontrol liquidctl
@@ -48,5 +48,40 @@ curl -Lo /usr/local/bin/scopebuddy \
   https://raw.githubusercontent.com/HikariKnight/ScopeBuddy/refs/heads/main/bin/scopebuddy
 chmod +x /usr/local/bin/scopebuddy
 ln -sf scopebuddy /usr/local/bin/scb
+
+# Build and install hgaiser's gamescope fork (required for Moonshine)
+echo "== Building gamescope-moonshine =="
+
+dnf5 install -y --skip-unavailable \
+  cmake gcc gcc-c++ git-core meson ninja-build \
+  glm-devel google-benchmark-devel libXcursor-devel libXmu-devel \
+  spirv-headers-devel stb_image-devel stb_image-static \
+  stb_image_resize-devel stb_image_resize-static \
+  stb_image_write-devel stb_image_write-static \
+  hwdata-devel libavif-devel libcap-devel libdecor-devel \
+  libdisplay-info-devel libdrm-devel libeis-devel \
+  libliftoff-devel pipewire-devel systemd-devel \
+  luajit-devel SDL2-devel vulkan-headers vulkan-loader-devel \
+  wayland-protocols-devel wayland-devel \
+  wlroots-devel libxkbcommon-devel xorg-x11-server-Xwayland-devel \
+  libX11-devel libXcomposite-devel libXdamage-devel libXext-devel \
+  libXfixes-devel libXrender-devel libXres-devel libXtst-devel libXxf86vm-devel \
+  glslang
+
+git clone --depth=1 --branch=moonshine https://github.com/hgaiser/gamescope /tmp/gamescope-moonshine
+pushd /tmp/gamescope-moonshine
+
+git submodule update --init --depth=1
+meson setup build/ -Dprefix=/usr -Dpipewire=enabled
+ninja -C build/
+meson install -C build/ --skip-subprojects
+
+popd
+
+# Verify gamescope-moonshine was installed
+if ! /usr/bin/gamescope --help | head -1; then
+  echo "ERROR: gamescope installation failed"
+  exit 1
+fi
 
 systemctl enable coolercontrold.service
