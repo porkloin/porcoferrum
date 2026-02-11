@@ -50,10 +50,10 @@ chmod +x /usr/local/bin/scopebuddy
 ln -sf scopebuddy /usr/local/bin/scb
 
 # Install Mesa with H.264/H.265 Vulkan Video encode support from terra-mesa
-dnf config-manager setopt terra-mesa.enabled=1
-dnf swap --repo=terra-mesa -y mesa-vulkan-drivers mesa-vulkan-drivers
-dnf install -y --repo=terra-mesa mesa-vulkan-drivers.x86_64
-dnf config-manager setopt terra-mesa.enabled=0
+#dnf config-manager setopt terra-mesa.enabled=1
+#dnf swap --repo=terra-mesa -y mesa-vulkan-drivers mesa-vulkan-drivers
+#dnf install -y --repo=terra-mesa mesa-vulkan-drivers.x86_64
+#dnf config-manager setopt terra-mesa.enabled=0
 
 # Build and install hgaiser's gamescope fork (required for Moonshine)
 dnf5 install -y --skip-unavailable \
