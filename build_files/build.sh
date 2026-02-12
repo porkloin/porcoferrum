@@ -45,7 +45,7 @@ if ! find "/usr/lib/modules/${KERNEL_VERSION}" -iname 'xone*.ko*' | grep -q .; t
 fi
 
 curl -Lo /usr/local/bin/scopebuddy \
-  https://raw.githubusercontent.com/HikariKnight/ScopeBuddy/refs/heads/main/bin/scopebuddy
+  https://raw.githubusercontent.com/OpenGamingCollective/ScopeBuddy/refs/heads/main/bin/scopebuddy
 chmod +x /usr/local/bin/scopebuddy
 ln -sf scopebuddy /usr/local/bin/scb
 
