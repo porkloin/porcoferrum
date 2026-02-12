@@ -49,13 +49,12 @@ curl -Lo /usr/local/bin/scopebuddy \
 chmod +x /usr/local/bin/scopebuddy
 ln -sf scopebuddy /usr/local/bin/scb
 
-# Install Mesa with H.264/H.265 Vulkan Video encode support from terra-mesa
-#dnf config-manager setopt terra-mesa.enabled=1
-#dnf swap --repo=terra-mesa -y mesa-vulkan-drivers mesa-vulkan-drivers
-#dnf install -y --repo=terra-mesa mesa-vulkan-drivers.x86_64
-#dnf config-manager setopt terra-mesa.enabled=0
+# Moonshine dependencies:
 
-# Build and install hgaiser's gamescope fork (required for Moonshine)
+# pactl needed for subshell
+dnf install -y pactl
+
+# deps for building hgaiser gamescope fork
 dnf5 install -y --skip-unavailable \
   cmake gcc gcc-c++ git-core meson ninja-build \
   glm-devel google-benchmark-devel libXcursor-devel libXmu-devel \
@@ -72,6 +71,7 @@ dnf5 install -y --skip-unavailable \
   libXfixes-devel libXrender-devel libXres-devel libXtst-devel libXxf86vm-devel \
   glslang
 
+# build hgaiser gamescope fork
 git clone --depth=1 --branch=moonshine https://github.com/hgaiser/gamescope /tmp/gamescope-moonshine
 pushd /tmp/gamescope-moonshine
 
