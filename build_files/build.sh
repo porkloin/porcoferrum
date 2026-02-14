@@ -46,6 +46,12 @@ dnf5 -y copr disable codifryed/CoolerControl
 #   exit 1
 # fi
 
+# Mesa with all video codecs (H.264/H.265/AV1 encode via Vulkan Video).
+# Fedora default mesa only includes patent-free codecs (AV1 only).
+# Terra mesa is built with -Dvideo-codecs=all.
+dnf5 -y --enablerepo=terra-mesa swap mesa-vulkan-drivers mesa-vulkan-drivers
+dnf5 -y --enablerepo=terra-mesa swap mesa-va-drivers mesa-va-drivers
+
 # Moonshine dependencies:
 
 # pactl needed for subshell
