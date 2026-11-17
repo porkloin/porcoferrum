@@ -29,7 +29,7 @@ Provides:       niri-spicy = %{version}-%{release}
 Requires:       mesa-dri-drivers
 Requires:       mesa-libEGL
 Requires:       vulkan-loader
-Requires:       xwayland-satellite == 0.8.1
+Requires:       xwayland-satellite
 
 %description
 niri is a scrollable-tiling Wayland compositor.
